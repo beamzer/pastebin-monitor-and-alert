@@ -5,7 +5,7 @@ Alerts are sent using [pushover](https://pushover.net/) directly to your mobile 
 
 original by [Mike Wilks](https://github.com/mikewilks), see his version on [github](https://github.com/mikewilks/simple-pastebin-monitor). He wrote about this in his [blog](http://www.mikewilks.com/home/who-has-your-data)
 
-Pastebin Monitor and Alert is a small Python script that replicates and and extends Pastebin alerts. It makes use of the [Pastebin Scraping API](https://pastebin.com/api_scraping_faq). You'll need a Pastebin PRO account to get access to the [Scraping API](https://pastebin.com/api_scraping_faq), because you will need to whitelist the IP where the script is running from.
+Pastebin Monitor and Alert is a small Python script that replicates and and extends Pastebin alerts. It makes use of the [Pastebin Scraping API](https://pastebin.com/api_scraping_faq). You'll need a Pastebin PRO account to work with the Scraping API, because it allows you to whitelist the IP address where the script is running from.
 
 The script can take three parameters, but definitions can also be done from within the script:
 1. The name and location of the file containing the keywords to check (default is ./keywords.txt)
