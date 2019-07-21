@@ -1,12 +1,26 @@
+#!/usr/bin/env python
+
+"""
+original:
+https://github.com/mikewilks/simple-pastebin-monitor/blob/master/simple-pb-monitor.py
+
+Ewald 20190721
+added pushover support
+"""
+
 import requests, time, sys, os
+
+from pushover import Client
+# specify Pushover api_token and user_key in ~/.pushoverrc
+po = Client()
 
 # Check for command line parameters for the keywords file and output directory
 # Start with defaults of ./keywords.txt and .
 
 # Start with defaults
-keyword_file = 'keywords.txt'
-output_path = '.'
-check_ip = False
+keyword_file = './keywords.txt'
+output_path = './FOUND'
+check_ip = True
 
 # keywords file as the first argument after the python file
 if len(sys.argv) > 1 :
@@ -25,15 +39,17 @@ if len(sys.argv) > 3 :
 with open(keyword_file) as f:
     keywords = f.read().splitlines()
 
-print ("keywords ",keywords)
+mess = "scanning for: %s " % (keywords)
+#print ("scanning for:",keywords)
+print (mess)
+po.send_message(mess, title="Pastebin", priority=0)
 
 check_index = 0
 check_list = []
 
 while True :
-    print ("Starting a loop")
 
-    # get the jsons from the scraping api
+    # get the jsons from the scraping api, limit can be up to 250 items
     r = requests.get("https://scrape.pastebin.com/api_scraping.php?limit=100")
 
     # Added a debug statement if the API is not authed, it has to be enabled through the params though to stop
@@ -59,7 +75,9 @@ while True :
                     # loop through the keywords to see if they are in the post
                     for word in keywords :
                         if word.lower() in text.lower() :
-                            print ('Matched keyword \'{}\' and will save {}'.format(word, individual['key']))
+                            mess = 'Matched keyword \'{}\' and will save {}'.format(word, individual['key'])
+                            print (mess)
+                            po.send_message(mess, title="Pastebin Hit", priority=1)
 
                             # Check whether the directory with the name of the keyword exists and create it if not
                             if not os.path.isdir (output_path+'/'+word) :
@@ -81,15 +99,13 @@ while True :
                     # at the key to the last 1000 check_list and increment the counter
                     check_list.insert(check_index,individual['key'])
                     check_index = check_index + 1
-            else :
-                print ("Skipping {}, already processed".format(individual['key']))
+            # enable the next two lines if you want debug info
+            # else :
+                # print ("Skipping {}, already processed".format(individual['key']))
 
     else :
         print ("There was an error calling the url")
 
     # wait a minute
-    print ("Sleeping a minute")
+    # print ("Sleeping a minute")
     time.sleep(60)
-
-
-
